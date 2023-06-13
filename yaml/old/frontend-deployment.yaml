@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert
+    kompose.version: 1.28.0 (c4137012e)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: frontend
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: frontend
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert
+        kompose.version: 1.28.0 (c4137012e)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/yaml-default: "true"
+        io.kompose.service: frontend
+    spec:
+      containers:
+        - env:
+            - name: REACT_APP_BASEURL
+              valueFrom:
+                configMapKeyRef:
+                  key: REACT_APP_BASEURL
+                  name: env
+            - name: REACT_APP_LANGUAGE
+              valueFrom:
+                configMapKeyRef:
+                  key: REACT_APP_LANGUAGE
+                  name: env
+            - name: SKIP_PREFLIGHT_CHECK
+              valueFrom:
+                configMapKeyRef:
+                  key: SKIP_PREFLIGHT_CHECK
+                  name: env
+          image: asuzas/docker-m347-frontend:latest
+          name: docker-m347-frontend
+          ports:
+            - containerPort: 8000
+          resources: {}
+      restartPolicy: Always
+status: {}

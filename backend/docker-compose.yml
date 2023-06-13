@@ -1,0 +1,42 @@
+version: '3.7'
+
+services:
+  frontend:
+    restart: always
+    image: asuzas/docker-m347-frontend:latest
+    container_name: docker-m347-frontend
+    env_file: .env
+    depends_on:
+      - backend
+    ports:
+      - 8000:80
+      - 8001:443
+    labels:
+      kompose.image-pull-policy: "Always"
+      kompose.service.type: "NodePort"
+      kompose.service.nodeport.port: "30081"
+  backend:
+    restart: always
+    image: asuzas/docker-m347-backend:latest
+    container_name: docker-m347-backend
+    ports:
+      - 8080:8080
+    environment:
+      - DB_HOST=db
+    depends_on:
+      - db
+    labels:
+      kompose.image-pull-policy: "Always"
+      kompose.service.type: "NodePort"
+      kompose.service.nodeport.port: "30080"
+
+  db:
+    restart: always
+    image: 'postgres:10-alpine'
+    container_name: db_m347_JaSchLuSch
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: 'postgres'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_DB: 'postgres'

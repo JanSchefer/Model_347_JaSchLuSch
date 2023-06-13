@@ -1,0 +1,144 @@
+name: CICD-Backend
+
+on: 
+  push
+
+jobs:
+  next-version-autoincrement:
+    name: Auto Version Increase & create new Release
+    permissions: write-all # Critical: Keep an Eye on this Job 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Next Release Number
+        run: echo ${{ steps.tag_version.outputs.new_tag }}
+
+      - name: Create a GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog }}
+    outputs:
+      tag: ${{ steps.tag_version.outputs.new_tag }}
+
+  test-backend-gradleTests:
+    name: Backend Gradle Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: 
+          - 5432:5432
+    defaults:
+      run:  
+        shell: bash
+        working-directory: ./backend
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 18
+        uses: actions/setup-java@v1
+        with:
+          distribution: 'temurin'
+          java-version: '18'
+          cache: 'gradle'
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Test with Gradle
+        run: ./gradlew test
+  
+  build-and-push-backend:
+    name: build tagged docker version BE
+    runs-on: ubuntu-latest
+    needs: [test-backend-gradleTests, next-version-autoincrement]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: build and push docker image backend
+        uses: docker/build-push-action@v3
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: 
+            ${{ secrets.DOCKER_HUB_USERNAME }}/docker-m347-backend:${{ github.sha }},
+            ${{ secrets.DOCKER_HUB_USERNAME }}/docker-m347-backend:latest,
+            ${{ secrets.DOCKER_HUB_USERNAME }}/docker-m347-backend:${{ needs.next-version-autoincrement.outputs.tag }}
+  build-and-push-frontend:
+    name: build tagged docker version FE
+    runs-on: ubuntu-latest
+    needs: [next-version-autoincrement]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: build and push docker image frontend
+        uses: docker/build-push-action@v3
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: 
+            ${{ secrets.DOCKER_HUB_USERNAME }}/docker-m347-frontend:${{ github.sha }},
+            ${{ secrets.DOCKER_HUB_USERNAME }}/docker-m347-frontend:latest,
+            ${{ secrets.DOCKER_HUB_USERNAME }}/docker-m347-frontend:${{ needs.next-version-autoincrement.outputs.tag }}
+
+  restart-server-docker:
+    name: Restart server docker compose
+    needs: ["build-and-push-backend", "build-and-push-frontend"]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./backend
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up WireGuard
+        uses: egor-tensin/setup-wireguard@v1
+        with:
+          endpoint: '${{ secrets.VPN_ENDPOINT }}'
+          endpoint_public_key: '${{ secrets.VPN_ENDPOINT_PUBLIC_KEY }}'
+          ips: '${{ secrets.VPN_IPS }}'
+          allowed_ips: '${{ secrets.VPN_ALLOWED_IPS }}'
+          private_key: '${{ secrets.VPN_PRIVATE_KEY }}'
+
+      - name: copying GitHub using password
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: 22
+          source: .
+          target: ./gitHubRepo
+
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: 22
+          script: |
+            cd ./gitHubRepo/yaml
+            kubectl apply -f all.yaml
