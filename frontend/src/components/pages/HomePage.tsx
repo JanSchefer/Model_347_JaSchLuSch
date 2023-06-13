@@ -3,6 +3,7 @@ import BlogPostService from '../../Services/BlogPostService';
 import { BlogPost } from '../../types/models/BlogPost.model';
 import AlcoholCard from '../molecules/Card/AlcoholCard';
 import Header from '../molecules/Header/Header';
+import {Typography} from "@mui/material";
 
 export default function HomePage() {
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
@@ -27,7 +28,9 @@ export default function HomePage() {
   return (
     <div>
       <Header/>
+      <Typography sx={{padding:"50px"}}>
     <AlcoholCard prop={test}/>
+      </Typography>
     </div>
   );
 }

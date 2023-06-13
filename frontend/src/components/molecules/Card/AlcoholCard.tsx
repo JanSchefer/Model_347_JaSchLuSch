@@ -6,7 +6,7 @@ import { Alcohol } from '../../../types/models/Alcohol.model';
 export default function AlcoholCard({ prop }: { prop: Alcohol }) {
     const INPUT_LENGTH: string = '250px'
     return (
-        <Card sx={{ display: 'flex', maxWidth: '700px', minHeight: '300px', maxHeight: '300px' }}>
+        <Card sx={{ display: 'flex', maxWidth: '700px', minHeight: '300px', maxHeight: '300px'}}>
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 <CardContent>
                     <Typography variant="h5" component="h2" sx={{ mb: 2 }}>{prop.name}</Typography>
@@ -61,6 +61,9 @@ export default function AlcoholCard({ prop }: { prop: Alcohol }) {
                                 </Grid>
                             </Grid>
                         </Grid>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Typography sx={{ wordBreak: "break-word", maxHeight: "100px" }}>Bewertung:</Typography>
                     </Grid>
                     <Rating
                         name="read-only"

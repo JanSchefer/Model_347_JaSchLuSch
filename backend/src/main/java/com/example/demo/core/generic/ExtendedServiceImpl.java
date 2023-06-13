@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
+
+import com.example.demo.domain.alcohol.dto.Alcohol;
+import com.example.demo.domain.blogpost.BlogPost;
 import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,13 +19,16 @@ public abstract class ExtendedServiceImpl<T extends ExtendedEntity> implements E
   protected final Logger logger;
   private String className;
 
-  protected ExtendedServiceImpl(ExtendedRepository<T> repository, Logger logger) {
-    this.repository = repository;
+  protected ExtendedServiceImpl(ExtendedRepository<Alcohol> alcoholRepository, Logger logger) {
     this.logger = logger;
     initClassName();
   }
 
-  private void initClassName() {
+    public ExtendedServiceImpl(ExtendedRepository<BlogPost> repository, Logger logger) {
+
+    }
+
+    private void initClassName() {
     try {
       this.className = Class.forName(((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0].getTypeName()).getSimpleName();
     } catch (ClassNotFoundException e) {
