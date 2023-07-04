@@ -12,10 +12,15 @@ const createAPI = (): AxiosInstance => {
   return axios.create({ baseURL: process.env.REACT_APP_BASEURL });
 };
 
+const createAPI2 = (): AxiosInstance => {
+  return axios.create({ baseURL: process.env.REACT_APP_BASEURL2 });
+};
+
 /**
  * api constant is the axios-instance used for all requests to the rest-api.
  */
 const api: AxiosInstance = createAPI();
+export const api2: AxiosInstance = createAPI2();
 
 /**
  * Set the Authorization header on each request equal to the token which
