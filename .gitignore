@@ -34,3 +34,4 @@ frontend/.eslintcache
 
 # MacOs
 .DS_Store
+node_modules

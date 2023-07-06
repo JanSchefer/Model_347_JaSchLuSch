@@ -1,0 +1,301 @@
+apiVersion: v1
+items:
+- apiVersion: v1 # Backend Blog 100
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yml -o out2.yaml
+      kompose.image-pull-policy: Always
+      kompose.service.nodeport.port: "30100"
+      kompose.service.type: NodePort
+      kompose.version: 1.29.0 (997957870)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: backendblog
+    name: backendblog
+  spec:
+    type: NodePort
+    ports:
+      - name: "8080"
+        nodePort: 30100
+        port: 8080
+        targetPort: 8080
+    selector:
+      io.kompose.service: backendblog
+  status:
+    loadBalancer: {}
+- apiVersion: v1 # Backend User 101
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yml -o out2.yaml
+      kompose.image-pull-policy: Always
+      kompose.service.nodeport.port: "30101"
+      kompose.service.type: NodePort
+      kompose.version: 1.29.0 (997957870)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: backenduser
+    name: backenduser
+  spec:
+    type: NodePort
+    ports:
+      - name: "8081"
+        nodePort: 30101
+        port: 8081
+        targetPort: 8080
+    selector:
+      io.kompose.service: backenduser
+    type: NodePort
+  status:
+    loadBalancer: {}
+- apiVersion: v1 # db 105
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yml -o out2.yaml
+      kompose.image-pull-policy: Always
+      kompose.service.nodeport.port: "30105"
+      kompose.service.type: NodePort
+      kompose.version: 1.29.0 (997957870)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: db
+    name: db
+  spec:
+    type: NodePort
+    ports:
+      - name: "5432"
+        nodePort: 30105
+        port: 5432
+        targetPort: 5432
+    selector:
+      io.kompose.service: db
+  status:
+    loadBalancer: {}
+- apiVersion: v1 # Frontend 103
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yml -o out2.yaml
+      kompose.image-pull-policy: Always
+      kompose.service.nodeport.port: "30103"
+      kompose.service.type: NodePort
+      kompose.version: 1.29.0 (997957870)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: frontend
+    name: frontend
+  spec:
+    type: NodePort
+    ports:
+      - name: "80"
+        nodePort: 30103
+        port: 80
+        targetPort: 80
+    selector:
+      io.kompose.service: frontend
+  status:
+    loadBalancer: {}
+
+- apiVersion: apps/v1 # Backend Blog Deployment
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yml -o out2.yaml
+      kompose.image-pull-policy: Always
+      kompose.service.nodeport.port: "30100"
+      kompose.service.type: NodePort
+      kompose.version: 1.29.0 (997957870)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: backendblog
+    name: backendblog
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        io.kompose.service: backendblog
+    strategy: {}
+    template:
+      metadata:
+        annotations:
+          kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yml -o out2.yaml
+          kompose.image-pull-policy: Always
+          kompose.service.nodeport.port: "30100"
+          kompose.service.type: NodePort
+          kompose.version: 1.29.0 (997957870)
+        creationTimestamp: null
+        labels:
+          io.kompose.network/m347-jaschlusch-default: "true"
+          io.kompose.service: backendblog
+      spec:
+        containers:
+          - env:
+              - name: DB_HOST
+                value: localhost:5432
+            image: janschefer/jsls347backend
+            imagePullPolicy: Always
+            name: docker-m347-backend-blog
+            ports:
+              - containerPort: 8080
+            resources: {}
+        restartPolicy: Always
+  status: {}
+- apiVersion: apps/v1 # Backend User Deployment
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yml -o out2.yaml
+      kompose.image-pull-policy: Always
+      kompose.service.nodeport.port: "30101"
+      kompose.service.type: NodePort
+      kompose.version: 1.29.0 (997957870)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: backenduser
+    name: backenduser
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        io.kompose.service: backenduser
+    strategy: {}
+    template:
+      metadata:
+        annotations:
+          kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yml -o out2.yaml
+          kompose.image-pull-policy: Always
+          kompose.service.nodeport.port: "30101"
+          kompose.service.type: NodePort
+          kompose.version: 1.29.0 (997957870)
+        creationTimestamp: null
+        labels:
+          io.kompose.network/m347-jaschlusch-default: "true"
+          io.kompose.service: backenduser
+      spec:
+        containers:
+          - env:
+              - name: DB_HOST
+                value: localhost:5432
+            image: janschefer/jsls347backend
+            imagePullPolicy: Always
+            name: docker-m347-backend-user
+            ports:
+              - containerPort: 8080
+            resources: {}
+        restartPolicy: Always
+  status: {}
+- apiVersion: apps/v1 # db Deployment
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yml -o out2.yaml
+      kompose.image-pull-policy: Always
+      kompose.service.nodeport.port: "30105"
+      kompose.service.type: NodePort
+      kompose.version: 1.29.0 (997957870)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: db
+    name: db
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        io.kompose.service: db
+    strategy: {}
+    template:
+      metadata:
+        annotations:
+          kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yml -o out2.yaml
+          kompose.image-pull-policy: Always
+          kompose.service.nodeport.port: "30105"
+          kompose.service.type: NodePort
+          kompose.version: 1.29.0 (997957870)
+        creationTimestamp: null
+        labels:
+          io.kompose.network/m347-jaschlusch-default: "true"
+          io.kompose.service: db
+      spec:
+        containers:
+          - env:
+              - name: POSTGRES_DB
+                value: postgres
+              - name: POSTGRES_PASSWORD
+                value: postgres
+              - name: POSTGRES_USER
+                value: postgres
+            image: postgres:10-alpine
+            name: db-m347-jaschlusch
+            ports:
+              - containerPort: 5432
+            resources: {}
+        restartPolicy: Always
+  status: {}
+- apiVersion: apps/v1 # Frontend Deployment
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yml -o out2.yaml
+      kompose.image-pull-policy: Always
+      kompose.service.nodeport.port: "30103"
+      kompose.service.type: NodePort
+      kompose.version: 1.29.0 (997957870)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: frontend
+    name: frontend
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        io.kompose.service: frontend
+    strategy: {}
+    template:
+      metadata:
+        annotations:
+          kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert -f docker-compose.yml -o out2.yaml
+          kompose.image-pull-policy: Always
+          kompose.service.nodeport.port: "30103"
+          kompose.service.type: NodePort
+          kompose.version: 1.29.0 (997957870)
+        creationTimestamp: null
+        labels:
+          io.kompose.service: frontend
+      spec:
+        containers:
+        - image: janschefer/jsls347
+          imagePullPolicy: Always
+          name: frontend
+          ports:
+            - containerPort: 80
+          resources: {}
+          env:
+          - name: REACT_APP_BASEURL
+            valueFrom:
+              configMapKeyRef:
+                key: REACT_APP_BASEURL
+                name: env
+          - name: REACT_APP_BASEURL2
+            valueFrom:
+              configMapKeyRef:
+                key: REACT_APP_BASEURL2
+                name: env
+          - name: REACT_APP_LANGUAGE
+            valueFrom:
+              configMapKeyRef:
+                key: REACT_APP_LANGUAGE
+                name: env
+          - name: SKIP_PREFLIGHT_CHECK
+            valueFrom:
+              configMapKeyRef:
+                key: SKIP_PREFLIGHT_CHECK
+                name: env
+        restartPolicy: Always
+        serviceAccountName: ""
+        volumes: null
+  status: {}
+
+kind: List
+metadata: {}
