@@ -56,6 +56,7 @@ const RegisterPage = () => {
                                 fullWidth
                                 required
                                 onChange={props.handleChange}
+                                data-cy={"createUser-first-name"}
                                 onBlur={props.handleBlur}
                                 value={props.values.firstName}
                             />
@@ -70,6 +71,7 @@ const RegisterPage = () => {
                                 fullWidth
                                 required
                                 onChange={props.handleChange}
+                                data-cy={"createUser-last-name"}
                                 onBlur={props.handleBlur}
                                 value={props.values.lastName}
                             />
@@ -84,6 +86,7 @@ const RegisterPage = () => {
                                 fullWidth
                                 required
                                 onChange={props.handleChange}
+                                data-cy={"createUser-email"}
                                 onBlur={props.handleBlur}
                                 value={props.values.email}
                             />
@@ -99,6 +102,7 @@ const RegisterPage = () => {
                                 fullWidth
                                 required
                                 onChange={props.handleChange}
+                                data-cy={"createUser-password"}
                                 onBlur={props.handleBlur}
                                 value={props.values.password}
                             />
@@ -111,6 +115,7 @@ const RegisterPage = () => {
                                 color='primary'
                                 variant='contained'
                                 style={buttonStyle}
+                                data-cy={"createUser-submit"}
                                 fullWidth>
                                 Register
                             </Button>

@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import ActiveUserContext from '../../../Contexts/ActiveUserContext';
 import BlogPostService from '../../../Services/BlogPostService';
 import { BlogPost } from '../../../types/models/BlogPost.model';
+import React from 'react';
 
 type Props = {
   blogPost: BlogPost,

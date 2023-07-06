@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import UserService from "../../Services/UserService";
 import { User } from '../../types/models/User.model';
 import Header from "../molecules/Header/Header";
+import React from "react";
 
 
 const UsersPage = () => {
@@ -15,10 +16,10 @@ const UsersPage = () => {
     }
 
     useEffect(() => {
-        UserService.getAllUsers().then((res) => setUsers(res.data))
+        UserService.getAllUsers().then((res) => 
+        setUsers(res.data))
         .catch((error) => console.log(error));
     }, []);
-
 
     const deleteUser = (id: string) => {
         UserService.deleteUser(id);
@@ -47,10 +48,10 @@ const UsersPage = () => {
                             }
                         </CardContent>
                         <CardActions>
-                            <Button variant="outlined" color="error" onClick={() => deleteUser(user.id)}>
+                            <Button variant="outlined" data-cy={user.email + "delete"} color="error" onClick={() => deleteUser(user.id)}>
                                 Delete
                             </Button>
-                            <Button variant="outlined" color="success" onClick={() => navigate(`/${user.id}/edit`)}>
+                            <Button variant="outlined" data-cy={user.email + "-edit"} color="success" onClick={() => navigate(`/${user.id}/edit`)}>
                                 Edit
                             </Button>
                         </CardActions>

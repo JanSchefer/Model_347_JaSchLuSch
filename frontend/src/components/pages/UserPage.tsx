@@ -7,6 +7,7 @@ import { BlogPost } from "../../types/models/BlogPost.model";
 import { User } from '../../types/models/User.model';
 import BlogCard from "../molecules/BlogCard/BlogCard";
 import Header from "../molecules/Header/Header";
+import React from "react";
 
 
 const UserPage = () => {

@@ -4,6 +4,7 @@ import BlogPostService from '../../Services/BlogPostService';
 import { BlogPost } from '../../types/models/BlogPost.model';
 import BlogCard from '../molecules/BlogCard/BlogCard';
 import Header from '../molecules/Header/Header';
+import React from 'react';
 
 export default function HomePage() {
   const [blogs, setBlogs] = useState<BlogPost[]>([]);

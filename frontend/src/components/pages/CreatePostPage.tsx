@@ -7,6 +7,7 @@ import BlogPostService from "../../Services/BlogPostService";
 import UserService from "../../Services/UserService";
 import { CreatePost } from "../../types/models/CreatePost.model";
 import { User } from "../../types/models/User.model";
+import React from "react";
 
 const validationSchema = Yup.object().shape({
     title: Yup.string().max(100),

@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import * as Yup from 'yup';
 import UserService from "../../Services/UserService";
 import { User } from "../../types/models/User.model";
+import React from "react";
 
 
 const validationSchema = Yup.object().shape({
@@ -71,6 +72,7 @@ const EditUserPage = () => {
                                 fullWidth
                                 required
                                 onChange={props.handleChange}
+                                data-cy={"editUser-first-name-edit"}
                                 onBlur={props.handleBlur}
                                 value={props.values.firstName}
                             />
@@ -85,6 +87,7 @@ const EditUserPage = () => {
                                 fullWidth
                                 required
                                 onChange={props.handleChange}
+                                data-cy={"editUser-last-name-edit"}
                                 onBlur={props.handleBlur}
                                 value={props.values.lastName}
                             />
@@ -99,6 +102,7 @@ const EditUserPage = () => {
                                 fullWidth
                                 required
                                 onChange={props.handleChange}
+                                data-cy={"editUser-email-edit"}
                                 onBlur={props.handleBlur}
                                 value={props.values.email}
                             />
@@ -111,6 +115,7 @@ const EditUserPage = () => {
                                 color='primary'
                                 variant='contained'
                                 style={buttonStyle}
+                                data-cy={"editUser-submit"}
                                 fullWidth>
                                 Edit
                             </Button>

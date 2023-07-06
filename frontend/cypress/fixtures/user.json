@@ -1,0 +1,9 @@
+{
+    "firstname": "firstname",
+    "lastname": "lastname",
+    "email": "cypress@test.com",
+    "password": "1234",
+    "firstname-edit": "firstname-edit",
+    "lastname-edit": "lastname-edit",
+    "email-edit": "cypress@edit.com"
+}
